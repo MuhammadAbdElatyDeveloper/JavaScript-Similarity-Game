@@ -80,6 +80,7 @@ function setGameBoard(level){
     // En: Show the cards for four seconds and then turn them over | Ar: عرض البطاقات أربع ثواني ثم قلبهم
     showAllCards();
 }
+
 if(window.addEventListener){window.addEventListener("load",setGameBoard,false);}
 else if(window.attachEvent){window.attachEvent("onload",setGameBoard);}
 else{window.onload = setGameBoard;}
