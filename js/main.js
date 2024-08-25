@@ -11,9 +11,10 @@ var errors=0;
 // En: Number of matched pairs | Ar: عدد الأزواج المتطابقة
 var matchedPairs=0;
 // En: Set the game board to a new level | Ar: تعيين لوحة اللعبة بمستوى جديد
-function setGameBoard(level){
+function setGameBoard(){
     errors=0;
     matchedPairs=0;
+    resetBoard();
     var currentLanguage=document.getElementById("gameLanguage").dataset.language;
     var currentLevel=document.getElementById("levelText").dataset.level;
     if(currentLanguage=="en"){
@@ -25,6 +26,7 @@ function setGameBoard(level){
         document.getElementById("levelMedium").innerText="Medium";
         document.getElementById("levelHard").innerText="Hard";
         document.getElementById("gameErrors").innerText="Errors: 0";
+        document.getElementById("newGame").innerText="Restart game";
         if(window.innerWidth==screen.width&&window.innerHeight==screen.height){
             document.getElementById("fullScreen").innerText="Unfull Screen";
         }
@@ -48,6 +50,7 @@ function setGameBoard(level){
         document.getElementById("levelMedium").innerText="متوسط";
         document.getElementById("levelHard").innerText="صعب";
         document.getElementById("gameErrors").innerText="الأخطاء: 0";
+        document.getElementById("newGame").innerText="أعد تشغيل اللعبة";
         if(window.innerWidth==screen.width&&window.innerHeight==screen.height){
             document.getElementById("fullScreen").innerText="إلغاء ملئ الشاشة";
         }
@@ -82,7 +85,7 @@ function setGameBoard(level){
 }
 if(window.addEventListener){window.addEventListener("load",setGameBoard,false);}
 else if(window.attachEvent){window.attachEvent("onload",setGameBoard);}
-else{window.onload = setGameBoard;}
+else{window.onload=setGameBoard;}
 // En: Change game language | Ar: تغيير لغة اللعبة
 function changeLanguage(){
     var currentLanguage=document.getElementById("gameLanguage");
@@ -99,9 +102,8 @@ function changeLanguage(){
         document.documentElement.lang="en";
     }
     document.getElementById("gameNotification").innerText="";
-    setGameBoard(document.getElementById("levelText"));
+    setGameBoard();
 }
-document.getElementById("gameLanguage").addEventListener("click",changeLanguage);
 // En: Change the game level between easy, medium and hard | Ar: تغيير مستوى اللعبة بين سهل ومتوسط وصعب
 function changeLevel(elem){
     var levelText=document.getElementById("levelText");
@@ -109,16 +111,13 @@ function changeLevel(elem){
     var newLevelId=elem.target.id;
     var newLevelText=elem.target.innerText;
     var currentLanguage=document.getElementById("gameLanguage").dataset.language;
-    var info;
     if(currentLevel!=newLevelId){
         var levelIs;
         if(currentLanguage=="en"){
             levelIs="Level is ";
-            info="You changed the game level to ";
         }
         else{
             levelIs="المستوى ";
-            info="لقد قمت بتغيير مستوى اللعبة إلى ";
         }
         levelText.dataset.level=newLevelId.slice(5);
         levelText.innerText=levelIs+newLevelText;
@@ -126,29 +125,34 @@ function changeLevel(elem){
         document.getElementById(currentLevel).classList.toggle("text-white");
         document.getElementById(newLevelId).classList.toggle("bg-success");
         document.getElementById(newLevelId).classList.toggle("text-white");
-        setGameBoard(newLevelText);
-        showGameNotification("info",info+newLevelText+".");
+        setGameBoard();
     }
     else{
-        if(currentLanguage=="en"){info="You did not change the game level.";}
-        else{info="لم تقم بتغيير مستوى اللعبة.";}
-        showGameNotification("warning",info);
+        var dir,info;
+        if(currentLanguage=="en"){
+            dir="ltr";
+            info="You did not change the game level.";
+        }
+        else{
+            dir="rtl";
+            info="لم تقم بتغيير مستوى اللعبة.";
+        }
+        gameNotificationShow(info,dir);
     }
 }
-document.getElementById("levelEasy").addEventListener("click",changeLevel);
-document.getElementById("levelMedium").addEventListener("click",changeLevel);
-document.getElementById("levelHard").addEventListener("click",changeLevel);
 // En: FullScreen or cancel FullScreen | Ar: ملئ الشاشة أو إلغاء ملئ الشاشة
 function fullScreen(){
     var currentLanguage=document.getElementById("gameLanguage").dataset.language;
-    var fullScreenText,fullScreenAlert,unfullScreenText,unfullScreenAlert;
+    var dir,fullScreenText,fullScreenAlert,unfullScreenText,unfullScreenAlert;
     if(currentLanguage=="en"){
+        dir="ltr";
         fullScreenAlert="Sorry, browser is unable to fullscreen.";
         fullScreenText="Full Screen";
         unfullScreenAlert="Sorry, browser is unable to cancel fullscreen.";
         unfullScreenText="Unfull Screen";
     }
     else{
+        dir="rtl";
         fullScreenAlert="عذراً، المتصفح غير قادر على ملء الشاشة.";
         fullScreenText="ملئ الشاشة";
         unfullScreenAlert="عذراً، المتصفح غير قادر على إلغاء وضع ملء الشاشة.";
@@ -164,7 +168,7 @@ function fullScreen(){
             fullScreen.innerText=fullScreenText;
         }
         catch{
-            showGameNotification("danger",unfullScreenAlert);
+            gameNotificationShow(unfullScreenAlert,dir);
             fullScreen.innerText=unfullScreenText;
         }
     }
@@ -178,12 +182,11 @@ function fullScreen(){
             fullScreen.innerText=unfullScreenText;
         }
         catch{
-            showGameNotification("danger",fullScreenAlert);
+            gameNotificationShow(fullScreenAlert,dir);
             fullScreen.innerText=fullScreenText;
         }
     }
 }
-document.getElementById("fullScreen").addEventListener("click",fullScreen);
 // En: Get game cards | Ar: جلب بطاقات اللعبة
 function getCards(){
     // En: All cards | Ar: كل البطاقات
@@ -269,10 +272,19 @@ function checkMatch(){
             var finishAudio=new Audio(location.pathname+'/sound/finish.mp3');
             finishAudio.play();
             // En: Show finish notification | Ar: إشعار الانتهاء
-            var info;
-            if(currentLanguage=="en"){info="Well done, you have finished finding all the matching cards.";}
-            else{info="أحسنت لقد أنتهيت من إيجاد كل البطاقات المتطابقة.";}
-            showGameNotification("info",info);
+            var dir,info,newGame;
+            if(currentLanguage=="en"){
+                dir="ltr";
+                info="Well done, you have finished finding all the matching cards.";
+                newGame="Play again";
+            }
+            else{
+                dir="rtl";
+                info="أحسنت لقد أنتهيت من إيجاد كل البطاقات المتطابقة.";
+                newGame="العب مرةً أخرى";
+            }
+            document.getElementById("newGame").innerText=newGame;
+            gameNotificationShow(info,dir);
         }
         else{
             // En: Play success sound | Ar: تشغيل صوت الصواب
@@ -317,6 +329,24 @@ function resetBoard(){
     lockBoard=false;
 }
 // En: Show notification to player | Ar: إظهار إشعار للاعب
-function showGameNotification(alert,notifi){
-    document.getElementById("gameNotification").innerHTML='<div class="alert alert-'+alert+' alert-dismissible border-5 border-danger fade fs-5 fw-bold mb-0 show text-center" role="alert">'+notifi+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+function gameNotificationShow(p,dir){
+    document.getElementById("gameNotification").innerHTML='<div><i class="btn btn-danger bi bi-x gameNotificationClose"></i><p dir='+dir+'>'+p+'</p></div>';
+    document.getElementById("gameNotification").classList.remove('d-none');
+    document.getElementById("gameNotification").classList.add('d-flex');
 }
+// En: Hide notification | Ar: إخفاء الإشعار
+function gameNotificationClose(){
+    document.getElementById("gameNotification").innerHTML="";
+    document.getElementById("gameNotification").classList.remove('d-flex');
+    document.getElementById("gameNotification").classList.add('d-none');
+}
+$(document).ready(function(){
+    $(document).on("click","#gameLanguage",changeLanguage);
+    $(document).on("click","#levelEasy",changeLevel);
+    $(document).on("click","#levelMedium",changeLevel);
+    $(document).on("click","#levelHard",changeLevel);
+    $(document).on("click","#newGame",setGameBoard);
+    $(document).on("click","#fullScreen",fullScreen);
+    $(document).on("click",".gameNotificationClose",gameNotificationClose);
+    $(document).on("blur","#gameNotification",gameNotificationClose);
+});
