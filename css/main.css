@@ -66,10 +66,6 @@
     font-size:1.28em;
     margin-bottom:0
 }
-
-
-
-
 @keyframes gameNotificationFadeIn{
     from{opacity:0}
     to{opacity:1}
