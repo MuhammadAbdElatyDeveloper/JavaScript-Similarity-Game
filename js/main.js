@@ -276,7 +276,7 @@ function setGameBoard() {
     document.getElementById(currentLevel).classList.add("text-white");
     if (currentLanguage == "en") {
         document.documentElement.dir = "ltr";
-        document.documentElement.title = "JavaScript Similarity Game | Muhammad Abdelaty Sayed";
+        document.title = "JavaScript Similarity Game | Muhammad Abdelaty Sayed";
         // En: Change game language text | Ar: تغيير نص تغيير اللغة
         document.getElementById("gameLanguage").innerText = "عربي";
         // En: Change the text in the game header | Ar: تغيير النصوص الموجودة في رأس اللعبة
@@ -298,7 +298,7 @@ function setGameBoard() {
         document.getElementById("gameDevelopedBy2").innerText = "Muhammad Abdelaty";
     } else {
         document.documentElement.dir = "rtl";
-        document.documentElement.title = "لعبة التشابه المعتمدة على جافا سكريبت | محمد عبد العاطي سيد";
+        document.title = "لعبة التشابه المعتمدة على جافا سكريبت | محمد عبد العاطي سيد";
         // En: Change game language text | Ar: تغيير نص تغيير اللغة
         document.getElementById("gameLanguage").innerText = "English";
         // En: Change the text in the game header | Ar: تغيير النصوص الموجودة في رأس اللعبة
