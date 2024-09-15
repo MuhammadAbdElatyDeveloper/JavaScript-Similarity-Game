@@ -81,11 +81,11 @@ function checkMatch() {
             var dir,info,newGame;
             if (currentLanguage == "en") {
                 dir = "ltr";
-                info = "Well done, you have finished finding all the matching cards.";
+                info = "Well done, you have finished finding all the matching cards, and there were "+errors+" mistakes.";
                 newGame = "Play again";
             } else {
                 dir = "rtl";
-                info = "أحسنت لقد أنتهيت من إيجاد كل البطاقات المتطابقة.";
+                info = "أحسنت لقد أنتهيت من إيجاد كل البطاقات المتطابقة، وكان عدد الأخطاء "+errors+".";
                 newGame = "العب مرةً أخرى";
             }
             document.getElementById("newGame").innerText = newGame;
