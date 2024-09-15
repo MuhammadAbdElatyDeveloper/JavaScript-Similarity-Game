@@ -89,7 +89,7 @@ function checkMatch() {
                 newGame = "العب مرةً أخرى";
             }
             document.getElementById("newGame").innerText = newGame;
-            gameNotificationShow(info,dir);
+            gameNotificationShow(info,dir,"newGame");
         } else {
             // En: Play success sound | Ar: تشغيل صوت الصواب
             var successAudio = new Audio(location.pathname+'/sound/success.mp3');
@@ -207,8 +207,12 @@ function gameNotificationClose() {
     document.getElementById("gameNotification").classList.add('d-none');
 }
 // En: Show notification to player | Ar: إظهار إشعار للاعب
-function gameNotificationShow(p,dir) {
-    document.getElementById("gameNotification").innerHTML = '<div><i class="btn btn-danger bi bi-x gameNotificationClose"></i><p dir='+dir+'>'+p+'</p></div>';
+function gameNotificationShow(p,dir,button="") {
+    if (button != "") {
+        var buttonText = document.getElementById(button).innerText;
+        button = '<button id="'+button+'" class="btn btn-success fw-bold mt-3 w-100">'+buttonText+'</button>';
+    }
+    document.getElementById("gameNotification").innerHTML = '<div><i class="btn btn-danger bi bi-x gameNotificationClose"></i><p dir='+dir+'>'+p+'</p>'+button+'</div>';
     document.getElementById("gameNotification").classList.remove('d-none');
     document.getElementById("gameNotification").classList.add('d-flex');
 }
@@ -269,6 +273,7 @@ function setGameBoard() {
     errors = 0;
     matchedPairs = 0;
     resetBoard();
+    gameNotificationClose();
     var currentLanguage = getCurrentLanguage();
     document.documentElement.lang = currentLanguage;
     var currentLevel = document.getElementById("levelText").dataset.level;
